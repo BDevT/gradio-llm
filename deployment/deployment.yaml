@@ -5,7 +5,7 @@ metadata:
   labels:
     app: gradio-hftgi-rag-redis
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: gradio-hftgi-rag-redis
@@ -23,11 +23,11 @@ spec:
       containers:
         - resources:
             limits:
-              cpu: '2'
-              memory: 2Gi
+              cpu: '4'
+              memory: 8Gi
             requests:
-              cpu: '1'
-              memory: 1Gi
+              cpu: '4'
+              memory: 8Gi
           readinessProbe:
             httpGet:
               path: /queue/status
@@ -50,15 +50,15 @@ spec:
             failureThreshold: 3
           env:
             - name: APP_TITLE
-              value: 'Talk with your documentation'
+              value: 'RBOT'
             - name: INFERENCE_SERVER_URL
-              value: 'https://your_inference_endpoint'
+              value: 'https://hf-text-generation-inference-server-scp012-dxm01.apps.ocp.osprey.hartree.stfc.ac.uk'
             - name: REDIS_URL
-              value: 'redis://default:*****@10.22.33.44:12345'
+              value: 'redis://default@redis-vector-service.scp012-dxm01.svc.cluster.local:6379'
             - name: REDIS_INDEX
-              values: 'docs'
+              value: 'docs'
             - name: MAX_NEW_TOKENS
-              value: '512'
+              value: '4096'
             - name: TOP_K
               value: '10'
             - name: TOP_P
@@ -92,7 +92,7 @@ spec:
             successThreshold: 1
             failureThreshold: 24
           terminationMessagePolicy: File
-          image: 'quay.io/rh-aiservices-bu/gradio-hftgi-rag-redis:latest'
+          image: 'docker.io/bdevt/llm:latest'
           volumeMounts:
             - name: redis-schema
               mountPath: /opt/app-root/src/redis_schema.yaml

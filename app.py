@@ -116,10 +116,8 @@ llm = HuggingFaceTextGenInference(
 
 # Prompt
 template="""<s>[INST] <<SYS>>
-You are a helpful, respectful and honest assistant named HatBot answering questions about OpenShift Data Science, aka RHODS.
+You are a helpful, respectful and honest assistant named RBOT.
 You will be given a question you need to answer, and a context to provide you with information. You must answer the question based as much as possible on this context.
-Always answer as helpfully as possible, while being safe. Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
-
 If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
 <</SYS>>
 
@@ -142,25 +140,33 @@ def ask_llm(message, history):
     for next_token, content in stream(message):
         yield(content)
 
-with gr.Blocks(title="HatBot", css="footer {visibility: hidden}") as demo:
+greensoft = gr.themes.Soft(
+    primary_hue="slate",
+    secondary_hue="zinc",
+    neutral_hue="neutral",
+)
+
+with gr.Blocks(title="RBOT", css="footer {visibility: hidden}", theme=greensoft) as demo:
     chatbot = gr.Chatbot(
         show_label=False,
-        avatar_images=(None,'assets/robot-head.svg'),
-        render=False
+        avatar_images=(None,'assets/atom.svg'),
+        render=False,
         )
     gr.ChatInterface(
         ask_llm,
         chatbot=chatbot,
+        textbox=None,
         clear_btn=None,
         retry_btn=None,
         undo_btn=None,
         stop_btn=None,
-        description=APP_TITLE
+        examples=["Why is the sky blue?", "Give me a list of all the planets in the solar system", "What is the meaning of life?"],
+        description="RBOT - Research ChatBot",
         )
 
 if __name__ == "__main__":
     demo.queue().launch(
         server_name='0.0.0.0',
         share=False,
-        favicon_path='./assets/robot-head.ico'
+        favicon_path='./assets/atom.ico'
         )
