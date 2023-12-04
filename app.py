@@ -29,6 +29,8 @@ TYPICAL_P = float(os.getenv('TYPICAL_P', 0.95))
 TEMPERATURE = float(os.getenv('TEMPERATURE', 0.01))
 REPETITION_PENALTY = float(os.getenv('REPETITION_PENALTY', 1.03))
 
+BEHAVIOUR = os.getenv('BEHAVIOUR', 'You are a helpful assistant')
+
 REDIS_URL = os.getenv('REDIS_URL')
 REDIS_INDEX = os.getenv('REDIS_INDEX')
 
@@ -114,16 +116,15 @@ llm = HuggingFaceTextGenInference(
     callbacks=[QueueCallback(q)]
 )
 
-# Prompt
-template="""<s>[INST] <<SYS>>
-You are a helpful, respectful and honest assistant named RBOT.
-You will be given a question you need to answer, and a context to provide you with information. You must answer the question based as much as possible on this context.
-If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+template = """<s>[INST] <<SYS>>
+{behaviour}
 <</SYS>>
 
 Question: {question}
 Context: {context} [/INST]
-"""
+""".format(behaviour=BEHAVIOUR, question="{question}", context="{context}")
+print(template)
+
 QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
 
 qa_chain = RetrievalQA.from_chain_type(
@@ -150,6 +151,7 @@ with gr.Blocks(title="RBOT", css="footer {visibility: hidden}", theme=greensoft)
     chatbot = gr.Chatbot(
         show_label=False,
         avatar_images=(None,'assets/atom.svg'),
+        height=1000,
         render=False,
         )
     gr.ChatInterface(

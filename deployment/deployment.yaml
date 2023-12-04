@@ -57,6 +57,8 @@ spec:
               value: 'redis://default@redis-vector-service.scp012-dxm01.svc.cluster.local:6379'
             - name: REDIS_INDEX
               value: 'docs'
+            - name: BEHAVIOUR
+              value: 'You are a helpful assistant. You have advanced scientific knowledge.'
             - name: MAX_NEW_TOKENS
               value: '4096'
             - name: TOP_K
@@ -81,7 +83,7 @@ spec:
             - name: http
               containerPort: 7860
               protocol: TCP
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           startupProbe:
             httpGet:
               path: /queue/status
